@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChronoWeave AI - Unravel History with AI</title>
+    <style>
+        /* --- Google Fonts --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        /* --- CSS Reset & Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #0c111f;
+            --primary-color: #00bcd4;
+            --primary-color-hover: #00dcf5;
+            --text-color: #e0e0e0;
+            --card-bg-color: #1a2035;
+            --border-color: #3a415a;
+            --shadow-color: rgba(0, 188, 212, 0.5);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* --- Language Switcher --- */
+        .language-switcher {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            z-index: 100;
+        }
+
+        .language-menu {
+            list-style: none;
+            display: flex;
+            gap: 15px;
+            background-color: rgba(26, 32, 53, 0.7);
+            padding: 8px 15px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border-color);
+        }
+
+        .language-menu a {
+            display: block;
+            text-decoration: none;
+            opacity: 0.6;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        .language-menu a:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .language-menu img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid transparent;
+        }
+        
+        /* --- Content Visibility Control --- */
+        .lang-content { display: none; }
+
+        #en:target ~ main .lang-content.en,
+        #pt:target ~ main .lang-content.pt,
+        #es:target ~ main .lang-content.es {
+            display: block;
+        }
+        
+        /* Fallback for when no target is set */
+        body:not(:has(:target)) .lang-content.en {
+            display: block;
+        }
+
+        /* Highlight active language flag */
+        #en:target ~ .language-switcher a[href="#en"] img,
+        #pt:target ~ .language-switcher a[href="#pt"] img,
+        #es:target ~ .language-switcher a[href="#es"] img {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--shadow-color);
+        }
+        body:not(:has(:target)) .language-switcher a[href="#en"] img {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--shadow-color);
+        }
+
+
+        /* --- Header & Hero Section --- */
+        .header {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px;
+            position: relative;
+            background: linear-gradient(rgba(12, 17, 31, 0.8), var(--bg-color)), url('https://placehold.co/1920x1080/0c111f/e0e0e0?text=Abstract+Background') no-repeat center center/cover;
+            overflow: hidden;
+        }
+        
+        .header-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--primary-color);
+        }
+
+        .header-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .header-content .subtitle {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            opacity: 0.9;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 20px var(--shadow-color);
+        }
+
+        .cta-button:hover {
+            background-color: var(--primary-color-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 25px var(--shadow-color);
+        }
+
+        /* --- Section Styling --- */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+            font-size: 1.1rem;
+            color: #b0b0b0;
+        }
+        
+        .section-light {
+            background-color: var(--card-bg-color);
+        }
+
+        /* --- How It Works Section --- */
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .step-card {
+            background-color: var(--bg-color);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .step-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .step-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        /* --- Why Choose Us Section --- */
+        .why-us-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .why-us-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .why-us-list {
+            list-style: none;
+        }
+        
+        .why-us-list li {
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .why-us-list .icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-right: 20px;
+            margin-top: 5px;
+        }
+
+        .why-us-list h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .why-us-image {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .why-us-image img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+        }
+
+        /* --- Showcase Section --- */
+        .showcase-image {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .showcase-image img {
+            width: 100%;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+        }
+
+
+        /* --- Footer --- */
+        .footer {
+            background-color: var(--card-bg-color);
+            padding: 40px 20px;
+            text-align: center;
+            color: #a0a0a0;
+        }
+        
+        .footer .logo {
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .footer .logo svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2.5rem;
+            }
+            .header-content .subtitle {
+                font-size: 1.1rem;
+            }
+            .section-title {
+                font-size: 2rem;
+            }
+            .why-us-content {
+                flex-direction: column-reverse;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .language-switcher {
+                top: 15px;
+                right: 15px;
+            }
+            .language-menu {
+                gap: 10px;
+                padding: 5px 10px;
+            }
+            .language-menu img {
+                width: 25px;
+                height: 25px;
+            }
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            .logo {
+                font-size: 2rem;
+            }
+            .logo svg {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Language selection anchors -->
+    <div id="en"></div>
+    <div id="pt"></div>
+    <div id="es"></div>
+
+    <!-- Language Switcher -->
+    <nav class="language-switcher">
+        <ul class="language-menu">
+            <li>
+                <a href="#en" title="English">
+                    <img src="https://flagcdn.com/w40/us.png" alt="USA Flag">
+                </a>
+            </li>
+            <li>
+                <a href="#pt" title="Português (Brasil)">
+                    <img src="https://flagcdn.com/w40/br.png" alt="Brazil Flag">
+                </a>
+            </li>
+            <li>
+                <a href="#es" title="Español">
+                    <img src="https://flagcdn.com/w40/es.png" alt="Spain Flag">
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <main>
+        <!-- ==================== HEADER / HERO ==================== -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.25 2.003c-5.518 0-9.998 4.48-9.998 9.998 0 5.518 4.48 9.998 9.998 9.998 5.518 0 9.998-4.48 9.998-9.998 0-5.518-4.48-9.998-9.998-9.998zm0 1.5a8.498 8.498 0 1 1 0 17 8.498 8.498 0 0 1 0-17zm.25 3.499v5.25l4.5 2.625-.75 1.299-5.25-3.049v-6.125h1.5z"/></svg>
+                   <span>ChronoWeave AI</span>
+                </div>
+                
+                <!-- English Content -->
+                <div class="lang-content en">
+                    <h1>Unravel History with AI</h1>
+                    <p class="subtitle">Enter any topic, and let our AI weave a detailed, interactive historical timeline for you. Discover the past in a new, engaging way.</p>
+                    <a href="#app" class="cta-button">Generate Your Timeline</a>
+                </div>
+
+                <!-- Portuguese Content -->
+                <div class="lang-content pt">
+                    <h1>Desvende a História com IA</h1>
+                    <p class="subtitle">Digite qualquer tópico e deixe nossa IA tecer uma linha do tempo histórica, detalhada e interativa para você. Descubra o passado de uma forma nova e envolvente.</p>
+                    <a href="#app" class="cta-button">Gere Sua Linha do Tempo</a>
+                </div>
+
+                <!-- Spanish Content -->
+                <div class="lang-content es">
+                    <h1>Desentraña la Historia con IA</h1>
+                    <p class="subtitle">Introduce cualquier tema y deja que nuestra IA teja una línea de tiempo histórica detallada e interactiva para ti. Descubre el pasado de una forma nueva y atractiva.</p>
+                    <a href="#app" class="cta-button">Genera Tu Línea de Tiempo</a>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- ==================== HOW IT WORKS ==================== -->
+        <section class="section section-light" id="how-it-works">
+            <div class="container">
+                <!-- English Content -->
+                <div class="lang-content en">
+                    <h2 class="section-title">How It Works</h2>
+                    <p class="section-subtitle">In three simple steps, transform any idea into a rich, visual timeline.</p>
+                </div>
+                <!-- Portuguese Content -->
+                <div class="lang-content pt">
+                    <h2 class="section-title">Como Funciona</h2>
+                    <p class="section-subtitle">Em três passos simples, transforme qualquer ideia em uma linha do tempo rica e visual.</p>
+                </div>
+                <!-- Spanish Content -->
+                <div class="lang-content es">
+                    <h2 class="section-title">Cómo Funciona</h2>
+                    <p class="section-subtitle">En tres sencillos pasos, transforma cualquier idea en una línea de tiempo rica y visual.</p>
+                </div>
+
+                <div class="how-it-works-grid">
+                    <div class="step-card">
+                        <span class="step-icon">1</span>
+                        <!-- English Content -->
+                        <div class="lang-content en">
+                            <h3>Enter Your Topic</h3>
+                            <p>Start with a simple prompt. It can be anything from "The History of Photography" to "The Evolution of Hip Hop".</p>
+                        </div>
+                        <!-- Portuguese Content -->
+                        <div class="lang-content pt">
+                            <h3>Digite Seu Tópico</h3>
+                            <p>Comece com um comando simples. Pode ser qualquer coisa, de "A História da Fotografia" a "A Evolução do Hip Hop".</p>
+                        </div>
+                        <!-- Spanish Content -->
+                        <div class="lang-content es">
+                            <h3>Introduce Tu Tema</h3>
+                            <p>Empieza con una simple instrucción. Puede ser cualquier cosa, desde "La Historia de la Fotografía" hasta "La Evolución del Hip Hop".</p>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <span class="step-icon">2</span>
+                         <!-- English Content -->
+                        <div class="lang-content en">
+                            <h3>AI Generation</h3>
+                            <p>Our advanced AI gets to work, researching and structuring a historically accurate and rich timeline in seconds.</p>
+                        </div>
+                        <!-- Portuguese Content -->
+                        <div class="lang-content pt">
+                            <h3>Geração por IA</h3>
+                            <p>Nossa IA avançada entra em ação, pesquisando e estruturando uma linha do tempo rica e historicamente precisa em segundos.</p>
+                        </div>
+                        <!-- Spanish Content -->
+                        <div class="lang-content es">
+                            <h3>Generación con IA</h3>
+                            <p>Nuestra IA avanzada se pone a trabajar, investigando y estructurando una línea de tiempo rica y históricamente precisa en segundos.</p>
+                        </div>
+                    </div>
+                    <div class="step-card">
+                        <span class="step-icon">3</span>
+                         <!-- English Content -->
+                        <div class="lang-content en">
+                            <h3>Explore & Discover</h3>
+                            <p>You are directed to a visually appealing page where you can navigate your new interactive timeline.</p>
+                        </div>
+                        <!-- Portuguese Content -->
+                        <div class="lang-content pt">
+                            <h3>Explore e Descubra</h3>
+                            <p>Você é direcionado para uma página visualmente atraente, onde pode navegar pela sua nova linha do tempo interativa.</p>
+                        </div>
+                        <!-- Spanish Content -->
+                        <div class="lang-content es">
+                            <h3>Explora y Descubre</h3>
+                            <p>Se te redirige a una página visualmente atractiva donde puedes navegar por tu nueva línea de tiempo interactiva.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== WHY CHOOSE US ==================== -->
+        <section class="section" id="why-us">
+            <div class="container">
+                <div class="why-us-content">
+                    <div class="why-us-text">
+                        <!-- English Content -->
+                        <div class="lang-content en">
+                            <h2 class="section-title" style="text-align: left;">Why ChronoWeave AI is Special</h2>
+                            <ul class="why-us-list">
+                                <li>
+                                    <span class="icon">✨</span>
+                                    <div>
+                                        <h3>Advanced AI Integration</h3>
+                                        <p>Our AI doesn't just generate text; it architects structured narratives, taking the experience to a new level.</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="icon">🎓</span>
+                                    <div>
+                                        <h3>Creativity and Education</h3>
+                                        <p>We've created a tool that is both fun and informative, perfect for anyone who loves stories and learning.</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="icon">🚀</span>
+                                    <div>
+                                        <h3>Simplicity and Efficiency</h3>
+                                        <p>Designed to be agile, it combines smart engineering with an intuitive interface to deliver impressive results quickly.</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                         <!-- Portuguese Content -->
+                        <div class="lang-content pt">
+                            <h2 class="section-title" style="text-align: left;">Por Que o ChronoWeave AI é Especial</h2>
+                             <ul class="why-us-list">
+                                <li>
+                                    <span class="icon">✨</span>
+                                    <div>
+                                        <h3>Integração Avançada de IA</h3>
+                                        <p>Nossa IA não apenas gera texto; ela arquiteta narrativas estruturadas, elevando a experiência a um novo nível.</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="icon">🎓</span>
+                                    <div>
+                                        <h3>Criatividade e Educação</h3>
+                                        <p>Criamos uma ferramenta que é ao mesmo tempo divertida e informativa, perfeita para quem ama histórias e aprendizado.</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="icon">🚀</span>
+                                    <div>
+                                        <h3>Simplicidade e Eficiência</h3>
+                                        <p>Projetado para ser ágil, combina engenharia inteligente com uma interface intuitiva para entregar resultados impressionantes rapidamente.</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                         <!-- Spanish Content -->
+                        <div class="lang-content es">
+                            <h2 class="section-title" style="text-align: left;">Por Qué ChronoWeave AI es Especial</h2>
+                             <ul class="why-us-list">
+                                <li>
+                                    <span class="icon">✨</span>
+                                    <div>
+                                        <h3>Integración Avanzada de IA</h3>
+                                        <p>Nuestra IA no solo genera texto; arquitecta narrativas estructuradas, llevando la experiencia a un nuevo nivel.</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="icon">🎓</span>
+                                    <div>
+                                        <h3>Creatividad y Educación</h3>
+                                        <p>Hemos creado una herramienta que es a la vez divertida e informativa, perfecta para cualquiera que ame las historias y el aprendizaje.</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <span class="icon">🚀</span>
+                                    <div>
+                                        <h3>Simplicidad y Eficiencia</h3>
+                                        <p>Diseñado para ser ágil, combina ingeniería inteligente con una interfaz intuitiva para ofrecer resultados impresionantes rápidamente.</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="why-us-image">
+                        <img src="https://i.imgur.com/KzXb0cK.png" alt="Screenshot of the ChronoWeave AI input interface" onerror="this.onerror=null;this.src='https://placehold.co/600x400/1a2035/e0e0e0?text=App+Interface';">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ==================== SHOWCASE ==================== -->
+        <section class="section section-light" id="showcase">
+             <div class="container">
+                <!-- English Content -->
+                <div class="lang-content en">
+                    <h2 class="section-title">See It In Action</h2>
+                    <p class="section-subtitle">From a simple query to a beautifully rendered timeline. This is what ChronoWeave AI creates for you.</p>
+                </div>
+                 <!-- Portuguese Content -->
+                <div class="lang-content pt">
+                    <h2 class="section-title">Veja em Ação</h2>
+                    <p class="section-subtitle">De uma simples pergunta a uma linha do tempo lindamente renderizada. É isso que o ChronoWeave AI cria para você.</p>
+                </div>
+                 <!-- Spanish Content -->
+                <div class="lang-content es">
+                    <h2 class="section-title">Míralo en Acción</h2>
+                    <p class="section-subtitle">Desde una simple consulta hasta una línea de tiempo bellamente renderizada. Esto es lo que ChronoWeave AI crea para ti.</p>
+                </div>
+                
+                <div class="showcase-image">
+                    <img src="https://i.imgur.com/lM5gZ2Z.png" alt="Example of a timeline generated by ChronoWeave AI about Amerigo Vespucci" onerror="this.onerror=null;this.src='https://placehold.co/800x600/0c111f/e0e0e0?text=Timeline+Example';">
+                </div>
+             </div>
+        </section>
+
+
+        <!-- ==================== FOOTER ==================== -->
+        <footer class="footer">
+            <div class="container">
+                <div class="logo">
+                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.25 2.003c-5.518 0-9.998 4.48-9.998 9.998 0 5.518 4.48 9.998 9.998 9.998 5.518 0 9.998-4.48 9.998-9.998 0-5.518-4.48-9.998-9.998-9.998zm0 1.5a8.498 8.498 0 1 1 0 17 8.498 8.498 0 0 1 0-17zm.25 3.499v5.25l4.5 2.625-.75 1.299-5.25-3.049v-6.125h1.5z"/></svg>
+                   <span>ChronoWeave AI</span>
+                </div>
+                 <!-- English Content -->
+                <div class="lang-content en">
+                    <p>A new way to connect the past to the present, using the best of technology to tell stories that matter.</p>
+                    <p>&copy; 2025 ChronoWeave AI. Created by Phranscisco Rabello. All Rights Reserved.</p>
+                </div>
+                 <!-- Portuguese Content -->
+                <div class="lang-content pt">
+                     <p>Uma nova forma de conectar o passado ao presente, usando o melhor da tecnologia para contar histórias que importam.</p>
+                     <p>&copy; 2025 ChronoWeave AI. Criado por Phranscisco Rabello. Todos os Direitos Reservados.</p>
+                </div>
+                 <!-- Spanish Content -->
+                <div class="lang-content es">
+                     <p>Una nueva forma de conectar el pasado con el presente, utilizando lo mejor de la tecnología para contar historias que importan.</p>
+                     <p>&copy; 2025 ChronoWeave AI. Creado por Phranscisco Rabello. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+</body>
+</html>
